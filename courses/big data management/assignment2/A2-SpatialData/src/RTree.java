@@ -180,7 +180,12 @@ public class RTree {
     reader.close();
   }
 
-  public void rangeQuery(String fileName) throws IOException {
+  // type ("r": recursive, "i": iter)
+  public void rangeQuery(String fileName, String type) throws IOException {
+    if(type != "i" && type != "r") {
+      System.out.println("Invalid type. Please choose from 'r' and 'i'.");
+      return;
+    }
     BufferedReader reader = new BufferedReader(new FileReader(fileName));
     // BufferedWriter writer = new BufferedWriter(new FileWriter("output/RqueriesResults.txt"));
 
@@ -200,25 +205,30 @@ public class RTree {
       window.add(yHigh);
 
       ArrayList<Integer> results = new ArrayList<Integer>();
-      Stack<TreeNode> stack = new Stack<TreeNode>();
-      stack.push(this.root);
-      while(!stack.empty()) {
-        TreeNode node = stack.pop();
-        if(node.getIsNonLeaf() == 0) {
-          for(int i = 0; i < node.getEntries().size(); i++) {
-            Entry entry = node.getEntries().get(i);
-            if(entry.isOverlap(window)) {
-              results.add(entry.getId());
+
+      if(type == "i") {
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        stack.push(this.root);
+        while(!stack.empty()) {
+          TreeNode node = stack.pop();
+          if(node.getIsNonLeaf() == 0) {
+            for(int i = 0; i < node.getEntries().size(); i++) {
+              Entry entry = node.getEntries().get(i);
+              if(entry.isOverlap(window)) {
+                results.add(entry.getId());
+              }
             }
-          }
-        } else {
-          for(int i = node.getEntries().size() - 1; i >= 0; i--) {
-            Entry entry = node.getEntries().get(i);
-            if(entry.isOverlap(window)) {
-              stack.push(entry.getNode());
+          } else {
+            for(int i = node.getEntries().size() - 1; i >= 0; i--) {
+              Entry entry = node.getEntries().get(i);
+              if(entry.isOverlap(window)) {
+                stack.push(entry.getNode());
+              }
             }
           }
         }
+      } else {
+        this.rangeQueryRecursive(this.root.getId(), window, results);
       }
       
       String resultStr = String.format("%d (%d): ", lineIdx, results.size());
@@ -237,5 +247,28 @@ public class RTree {
 
     reader.close();
     // writer.close();
+  }
+
+  public int getRootId() {
+    return this.root.getId();
+  }
+
+  public void rangeQueryRecursive(int nodeId, ArrayList<Double> window, ArrayList<Integer> results) {
+    TreeNode node = this.idToNode.get(nodeId);
+    if(node.getIsNonLeaf() == 0) {
+      for(int i = 0; i < node.getEntries().size(); i++) {
+        Entry entry = node.getEntries().get(i);
+        if(entry.isOverlap(window)) {
+          results.add(entry.getId());
+        }
+      }
+    } else {
+      for(int i = 0; i < node.getEntries().size(); i++) {
+        Entry entry = node.getEntries().get(i);
+        if(entry.isOverlap(window)) {
+          rangeQueryRecursive(entry.getNode().getId(), window, results);
+        }
+      }
+    }
   }
 }

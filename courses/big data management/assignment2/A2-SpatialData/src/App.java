@@ -2,18 +2,35 @@ public class App {
     static int MAX_CAPACITY = 20;
     static double MIN_FILL = 0.4;
     public static void main(String[] args) throws Exception {
-        // part 1
-        // HeapFile heapFile = new HeapFile();
-        // heapFile.readFromFiles("input/coords.txt", "input/offsets.txt");
+        System.out.println("Please select the part of the codes you want to run (available options: 1, 2, 3): ");
+        if(Integer.parseInt(args[0]) == 1) {
+            // part 1
+            HeapFile heapFile = new HeapFile();
+            System.out.println("Please input the file path of the coordinates of points: ");
+            String coordsFileName = args[1];
+            System.out.println("Please input the file path of the offsets of polygon objects: ");
+            String offsetFileName = args[2];
+            heapFile.readFromFiles(coordsFileName, offsetFileName);
 
-        // RTree rTree = new RTree(MAX_CAPACITY, MIN_FILL);
-        // rTree.bulkLoading(heapFile);
-        // rTree.writeTree("output/Rtree.txt");
+            RTree rTree = new RTree(MAX_CAPACITY, MIN_FILL);
+            rTree.bulkLoading(heapFile);
+            rTree.writeTree("output/Rtree.txt");
+        } else if(Integer.parseInt(args[0]) == 2) {
+            // part 2
+            RTree rTree = new RTree(MAX_CAPACITY, MIN_FILL);
+            System.out.println("Please input the file path of the Rtree: ");
+            String rTreeFileName = args[1];
+            rTree.readTreeFromFile(rTreeFileName);
+            // rTree.writeTree("output/Rtree2.txt");
+
+            System.out.println("Please input the file path of the range queries: ");
+            String rQueriesFileName = args[2];
+            rTree.rangeQuery(rQueriesFileName, "r");
+        } else if(Integer.parseInt(args[0]) == 3) {
+
+        } else {
+            System.out.println("Invalid argument.");
+        }
         
-        // part 2
-        RTree rTree2 = new RTree(MAX_CAPACITY, MIN_FILL);
-        rTree2.readTreeFromFile("output/Rtree.txt");
-        rTree2.writeTree("output/Rtree2.txt");
-        rTree2.rangeQuery("input/Rqueries.txt");
     }
 }
