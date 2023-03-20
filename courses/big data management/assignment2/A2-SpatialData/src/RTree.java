@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.IOException;
@@ -177,5 +178,64 @@ public class RTree {
     this.levels.add(nonLeafNodes);
 
     reader.close();
+  }
+
+  public void rangeQuery(String fileName) throws IOException {
+    BufferedReader reader = new BufferedReader(new FileReader(fileName));
+    // BufferedWriter writer = new BufferedWriter(new FileWriter("output/RqueriesResults.txt"));
+
+    String line;
+    int lineIdx = 0;
+    while((line = reader.readLine()) != null) {
+      String[] querySplit = line.split(" ");
+      double xLow = Double.parseDouble(querySplit[0]);
+      double yLow = Double.parseDouble(querySplit[1]);
+      double xHigh = Double.parseDouble(querySplit[2]);
+      double yHigh = Double.parseDouble(querySplit[3]);
+
+      ArrayList<Double> window = new ArrayList<Double>();
+      window.add(xLow);
+      window.add(yLow);
+      window.add(xHigh);
+      window.add(yHigh);
+
+      ArrayList<Integer> results = new ArrayList<Integer>();
+      Stack<TreeNode> stack = new Stack<TreeNode>();
+      stack.push(this.root);
+      while(!stack.empty()) {
+        TreeNode node = stack.pop();
+        if(node.getIsNonLeaf() == 0) {
+          for(int i = 0; i < node.getEntries().size(); i++) {
+            Entry entry = node.getEntries().get(i);
+            if(entry.isOverlap(window)) {
+              results.add(entry.getId());
+            }
+          }
+        } else {
+          for(int i = node.getEntries().size() - 1; i >= 0; i--) {
+            Entry entry = node.getEntries().get(i);
+            if(entry.isOverlap(window)) {
+              stack.push(entry.getNode());
+            }
+          }
+        }
+      }
+      
+      String resultStr = String.format("%d (%d): ", lineIdx, results.size());
+      for(int i = 0; i < results.size(); i++) {
+        if(i == results.size() - 1) {
+          resultStr += results.get(i);
+        } else {
+          resultStr += results.get(i) + ",";
+        }
+      }
+      // writer.write(resultStr + "\n");
+      System.out.println(resultStr);
+
+      lineIdx++;
+    }
+
+    reader.close();
+    // writer.close();
   }
 }

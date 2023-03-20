@@ -14,6 +14,6 @@ public class App {
         RTree rTree2 = new RTree(MAX_CAPACITY, MIN_FILL);
         rTree2.readTreeFromFile("output/Rtree.txt");
         rTree2.writeTree("output/Rtree2.txt");
-        
+        rTree2.rangeQuery("input/Rqueries.txt");
     }
 }

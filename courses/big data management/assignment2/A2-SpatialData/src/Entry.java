@@ -35,4 +35,22 @@ public class Entry {
   public String toString() {
     return String.format("[%d, [%s, %s, %s, %s]]", this.id, this.mbr.get(0), this.mbr.get(1), this.mbr.get(2), this.mbr.get(3));
   }
+
+  public boolean isOverlap(ArrayList<Double> window) {
+    Double mbrXLow = this.mbr.get(0);
+    Double mbrXHigh = this.mbr.get(1);
+    Double mbrYLow = this.mbr.get(2);
+    Double mbrYHigh = this.mbr.get(3);
+
+    Double winXLow = window.get(0);
+    Double winXHigh = window.get(2);
+    Double winYLow = window.get(1);
+    Double winYHigh = window.get(3);
+
+    return mbrXHigh >= winXLow && mbrXLow <= winXHigh && mbrYHigh >= winYLow && mbrYLow <= winYHigh;
+  }
+
+  public TreeNode getNode() {
+    return this.ptr;
+  }
 }
