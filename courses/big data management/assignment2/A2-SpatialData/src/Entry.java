@@ -19,6 +19,11 @@ public class Entry {
     this.mbr = ptr.getMBR();
   }
 
+  public Entry(int id, ArrayList<Double> mbr) {
+    this.id = id;
+    this.mbr = mbr;
+  }
+
   public int getId() {
     return this.id;
   }

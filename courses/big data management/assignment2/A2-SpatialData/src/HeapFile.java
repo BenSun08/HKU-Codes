@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -12,11 +11,8 @@ public class HeapFile {
     }
 
     public void readFromFiles(String coordsFileName, String offsetFileName) throws IOException {
-        File coordsFile = new File(coordsFileName);
-        File offsetFile = new File(offsetFileName);
-
-        BufferedReader coordsReader = new BufferedReader(new FileReader(coordsFile));
-        BufferedReader offsetReader = new BufferedReader(new FileReader(offsetFile));
+        BufferedReader coordsReader = new BufferedReader(new FileReader(coordsFileName));
+        BufferedReader offsetReader = new BufferedReader(new FileReader(offsetFileName));
 
         String coordsLine;
         String offsetLine;

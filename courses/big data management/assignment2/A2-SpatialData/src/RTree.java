@@ -1,7 +1,11 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.IOException;
-import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
 public class RTree {
@@ -9,6 +13,7 @@ public class RTree {
   private double minRate;
   private TreeNode root;
   private ArrayList<ArrayList<TreeNode>> levels;
+  HashMap<Integer, TreeNode> idToNode = new HashMap<Integer, TreeNode>();
 
   public RTree(int maxCapacity, double minRate) {
     this.maxCapacity = maxCapacity;
@@ -58,6 +63,10 @@ public class RTree {
   }
 
   public void bulkLoading(HeapFile disk) {
+    if(levels.size() > 0) {
+      System.out.println("The tree has already been built.");
+      return;
+    }
     ArrayList<Polygon> polygons = disk.getPolygons();
     ArrayList<Entry> entries = new ArrayList<Entry>();
     for (int i = 0; i < polygons.size(); i++) {
@@ -93,5 +102,80 @@ public class RTree {
     }
 
     writer.close();
+  }
+
+  private TreeNode parseLine(String line) {
+    Matcher m = Pattern.compile("\\[(.*?)\\]").matcher(line);
+    TreeNode node = null;
+    int isNonLeaf = 0;
+    if(m.find()) {
+      String[] rootLineSplit = m.group(1).split(", ");
+      isNonLeaf = Integer.parseInt(rootLineSplit[0]);
+      node = new TreeNode(isNonLeaf);
+      node.setId(Integer.parseInt(rootLineSplit[1]));
+      int entryId = Integer.parseInt(rootLineSplit[2].substring(2));
+      if (isNonLeaf == 0) {
+        ArrayList<Double> mbr = new ArrayList<Double>();
+        mbr.add(Double.parseDouble(rootLineSplit[3].substring(1)));
+        for(int i= 0; i<3; i++) {
+          mbr.add(Double.parseDouble(rootLineSplit[4+i]));
+        }
+        node.addEntry(new Entry(entryId, mbr));
+      } else {
+        node.addEntry(new Entry(idToNode.get(entryId)));
+      }
+    }
+    if (isNonLeaf == 0) {
+      while (m.find()) {
+        String[] entryLineSplit = m.group(1).split(", ");
+        int entryId = Integer.parseInt(entryLineSplit[0]);
+        ArrayList<Double> mbr = new ArrayList<Double>();
+        mbr.add(Double.parseDouble(entryLineSplit[1].substring(1)));
+        for(int i= 0; i<3; i++) {
+          mbr.add(Double.parseDouble(entryLineSplit[2+i]));
+        }
+        node.addEntry(new Entry(entryId, mbr));
+      }
+    } else {
+      while (m.find()) {
+        String[] entryLineSplit = m.group(1).split(", ");
+        int entryId = Integer.parseInt(entryLineSplit[0]);
+        node.addEntry(new Entry(idToNode.get(entryId)));
+      }
+    }
+    return node;
+  }
+
+  public void readTreeFromFile(String fileName) throws IOException {
+    if(this.levels.size() > 0) {
+      System.out.println("The tree has already been built.");
+      return;
+    }
+    // read the tree from the file
+    BufferedReader reader = new BufferedReader(new FileReader(fileName));
+    String line;
+    ArrayList<TreeNode> nodes = new ArrayList<TreeNode>();
+    TreeNode node = new TreeNode(0);
+    while((line = reader.readLine()) != null) {
+      node = this.parseLine(line);
+      idToNode.put(node.getId(), node);
+      if(node.getIsNonLeaf() == 0) {
+        nodes.add(node);
+      } else {
+        this.levels.add(nodes);
+        break;
+      }
+    }
+    ArrayList<TreeNode> nonLeafNodes = new ArrayList<TreeNode>();
+    nonLeafNodes.add(node);
+    while((line = reader.readLine()) != null) {
+      node = this.parseLine(line);
+      idToNode.put(node.getId(), node);
+      nonLeafNodes.add(node);
+    }
+    this.root = node;
+    this.levels.add(nonLeafNodes);
+
+    reader.close();
   }
 }
