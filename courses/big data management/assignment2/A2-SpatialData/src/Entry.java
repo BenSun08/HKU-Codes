@@ -28,6 +28,6 @@ public class Entry {
   }
 
   public String toString() {
-    return String.format("[id, [%f, %f, %f, %f]]", this.id, this.mbr.get(0), this.mbr.get(1), this.mbr.get(2), this.mbr.get(3));
+    return String.format("[%d, [%s, %s, %s, %s]]", this.id, this.mbr.get(0), this.mbr.get(1), this.mbr.get(2), this.mbr.get(3));
   }
 }

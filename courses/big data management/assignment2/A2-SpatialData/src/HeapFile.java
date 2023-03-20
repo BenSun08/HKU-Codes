@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,7 +6,6 @@ import java.io.BufferedReader;
 
 public class HeapFile {
     private ArrayList<Polygon> polygons;
-    public HashMap<Integer, Integer> idLocMap = new HashMap<Integer, Integer>();
 
     public HeapFile() {
         this.polygons = new ArrayList<Polygon>();
@@ -45,9 +43,6 @@ public class HeapFile {
         offsetReader.close();
 
         this.polygons.sort((Polygon p1, Polygon p2) -> p1.getZOrderCode().compareTo(p2.getZOrderCode()));
-        for (int i = 0; i < this.polygons.size(); i++) {
-            this.idLocMap.put(this.polygons.get(i).getId(), i);
-        }
     }
 
     public ArrayList<Polygon> getPolygons() {

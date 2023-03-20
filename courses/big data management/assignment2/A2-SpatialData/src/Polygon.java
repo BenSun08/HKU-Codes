@@ -45,8 +45,36 @@ public class Polygon {
   public void calZOrderCode() {
     double centerX = (this.maxX + this.minX) / 2;
     double centerY = (this.maxY + this.minY) / 2;
+    if(centerX > 180) {
+      centerX = (centerX % 180) + 180.0;
+    } else if (centerX < -180){
+      centerX = (-((-centerX) % 180)) + 180.0;
+    } else {
+      centerX = centerX + 180.0;
+    }
+    if(centerY > 90) {
+      centerY = (centerY % 90) + 90.0;
+    } else if (centerY < -90){
+      centerY = (-((-centerY) % 90)) + 90.0;
+    } else {
+      centerY = centerY + 90.0;
+    }
+
     this.zOrderCode = "";
-    
+    int z = 0;
+    for (int i = 0; i < 32; i++) {
+      double dx = Utils._DIVISORS.get(i);
+      int digit = 0;
+      if (centerY >= dx) {
+        digit |= 2;
+        centerY -=dx;
+      }
+      if (centerX >= dx) {
+        digit |= 1;
+        centerX -=dx;
+      }
+      this.zOrderCode += Integer.toString(digit);
+    }
   }
 
   public String getZOrderCode() {

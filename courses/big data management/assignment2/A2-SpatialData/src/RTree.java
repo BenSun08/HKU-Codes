@@ -1,4 +1,8 @@
 import java.util.ArrayList;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 
 public class RTree {
   private int maxCapacity;
@@ -76,7 +80,18 @@ public class RTree {
     }
   }
 
-  public void writeTree(String fileName) {
+  public void writeTree(String fileName) throws IOException {
+    BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
     // write the tree to the file
+    for(int i = 0; i < levels.size(); i++) {
+      ArrayList<TreeNode> nodes = levels.get(i);
+      for(int j = 0; j < nodes.size(); j++) {
+        TreeNode node = nodes.get(j);
+        String line = node.toString();
+        writer.write(line + "\n");
+      }
+    }
+
+    writer.close();
   }
 }

@@ -73,6 +73,7 @@ public class TreeNode {
   // pop entry from the end of the node and return it
   public Entry pop() {
     Entry tail = this.entries.get(this.entries.size() - 1);
+    this.entries.remove(this.entries.size() - 1);
     this.recalMBR();
     return tail;
   }
@@ -107,7 +108,7 @@ public class TreeNode {
   }
 
   public String toString() {
-    String str = String.format("[%d, $s, [", this.isNonLeaf, this.id);
+    String str = String.format("[%d, %d, [", this.isNonLeaf, this.id);
     for (int i = 0; i < this.entries.size(); i++) {
       str += this.entries.get(i).toString();
       if (i != this.entries.size() - 1) {

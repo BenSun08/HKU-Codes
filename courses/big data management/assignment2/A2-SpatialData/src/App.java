@@ -5,5 +5,7 @@ public class App {
 
         RTree rTree = new RTree(20, 0.4);
         rTree.bulkLoading(heapFile);
+
+        rTree.writeTree("output/Rtree.txt");
     }
 }
