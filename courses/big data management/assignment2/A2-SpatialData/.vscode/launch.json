@@ -1,0 +1,38 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [ 
+    {
+      "type": "java",
+      "name": "A2_part1",
+      "request": "launch",
+      "mainClass": "App",
+      "projectName": "A2-SpatialData_2121a3db",
+      "args": "1 input/coords.txt input/offsets.txt"
+    },
+    {
+      "type": "java",
+      "name": "A2_part2",
+      "request": "launch",
+      "mainClass": "App",
+      "projectName": "A2-SpatialData_2121a3db",
+      "args": "2 output/Rtree.txt input/Rqueries.txt",
+    },
+    {
+      "type": "java",
+      "name": "A2_part3",
+      "request": "launch",
+      "mainClass": "App",
+      "projectName": "A2-SpatialData_2121a3db",
+      "args": "3 output/Rtree.txt input/NNqueries.txt 10",
+    },
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+  ]
+}

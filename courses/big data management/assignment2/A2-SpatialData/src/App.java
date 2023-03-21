@@ -27,7 +27,19 @@ public class App {
             String rQueriesFileName = args[2];
             rTree.rangeQuery(rQueriesFileName, "r");
         } else if(Integer.parseInt(args[0]) == 3) {
+            // part 3
+            RTree rTree = new RTree(MAX_CAPACITY, MIN_FILL);
+            System.out.println("Please input the file path of the Rtree: ");
+            String rTreeFileName = args[1];
+            rTree.readTreeFromFile(rTreeFileName);
 
+            System.out.println("Please input the file path of the nearest neighbors queries: ");
+            String rnnQueriesFileName = args[2];
+
+            System.out.println("Please input the number of nearest neighbors: ");
+            int k = Integer.parseInt(args[3]);
+
+            rTree.kNNQueries(rnnQueriesFileName, k);
         } else {
             System.out.println("Invalid argument.");
         }

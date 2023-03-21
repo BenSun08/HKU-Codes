@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -121,7 +123,8 @@ public class RTree {
         for(int i= 0; i<3; i++) {
           mbr.add(Double.parseDouble(rootLineSplit[4+i]));
         }
-        node.addEntry(new Entry(entryId, mbr));
+
+        node.addEntry(new Entry(entryId, mbr, isNonLeaf));
       } else {
         node.addEntry(new Entry(idToNode.get(entryId)));
       }
@@ -135,7 +138,7 @@ public class RTree {
         for(int i= 0; i<3; i++) {
           mbr.add(Double.parseDouble(entryLineSplit[2+i]));
         }
-        node.addEntry(new Entry(entryId, mbr));
+        node.addEntry(new Entry(entryId, mbr, isNonLeaf));
       }
     } else {
       while (m.find()) {
@@ -180,7 +183,7 @@ public class RTree {
     reader.close();
   }
 
-  // type ("r": recursive, "i": iter)
+  // type ("r": recursive, "i": iterative)
   public void rangeQuery(String fileName, String type) throws IOException {
     if(type != "i" && type != "r") {
       System.out.println("Invalid type. Please choose from 'r' and 'i'.");
@@ -253,7 +256,7 @@ public class RTree {
     return this.root.getId();
   }
 
-  public void rangeQueryRecursive(int nodeId, ArrayList<Double> window, ArrayList<Integer> results) {
+  private void rangeQueryRecursive(int nodeId, ArrayList<Double> window, ArrayList<Integer> results) {
     TreeNode node = this.idToNode.get(nodeId);
     if(node.getIsNonLeaf() == 0) {
       for(int i = 0; i < node.getEntries().size(); i++) {
@@ -270,5 +273,53 @@ public class RTree {
         }
       }
     }
+  }
+
+  public void kNNQueries(String fileName, int k) throws IOException {
+    BufferedReader reader = new BufferedReader(new FileReader(fileName));
+    // BufferedWriter writer = new BufferedWriter(new FileWriter("output/kNNqueriesResults.txt"));
+    String line;
+    int lineIdx = 0;
+
+    while((line = reader.readLine()) != null) {
+      String[] lineSplit = line.split(" ");
+      double x = Double.parseDouble(lineSplit[0]);
+      double y = Double.parseDouble(lineSplit[1]);
+
+      ArrayList<Integer> kNNs = new ArrayList<Integer>();
+      PriorityQueue<Entry> pQueue = new PriorityQueue<Entry>(Comparator.comparingDouble(e -> e.distance(x, y)));
+      
+      for(int i = 0; i < this.root.getEntries().size(); i++) {
+        pQueue.add(this.root.getEntries().get(i));
+      }
+
+      while(pQueue.size() > 0 && kNNs.size() < k) {
+        Entry entry = pQueue.poll();
+
+        if(entry.getIsNonLeaf() == 0) {
+          kNNs.add(entry.getId());
+        } else {
+          for(int i = 0; i < entry.getNode().getEntries().size(); i++) {
+            Entry childEntry = entry.getNode().getEntries().get(i);
+            pQueue.add(childEntry);
+          }
+        }
+      }
+
+      String kNNsStr = String.format("%d (%d): ", lineIdx, kNNs.size());
+      for(int i = 0; i < kNNs.size(); i++) {
+        if(i == kNNs.size() - 1) {
+          kNNsStr += kNNs.get(i);
+        } else {
+          kNNsStr += kNNs.get(i) + ",";
+        }
+      }
+      // writer.write(kNNsStr + "\n");
+      System.out.println(kNNsStr);
+      lineIdx++;
+    }
+
+    reader.close();
+    // writer.close();
   }
 }
