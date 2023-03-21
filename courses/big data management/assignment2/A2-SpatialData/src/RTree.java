@@ -89,6 +89,13 @@ public class RTree {
     // print the tree
     for(int i = 0; i < levels.size(); i++) {
       System.out.println(String.format("%d nodes at level %d", levels.get(i).size(), i));
+
+//      int lastIdx = levels.get(i).size() - 1;
+//      System.out.println(String.format("The size of the last node: %d", levels.get(i).get(lastIdx).size()));
+//      if(levels.get(i).size() > 1) {
+//        int last2Idx = levels.get(i).size() - 2;
+//        System.out.println(String.format("The size of the last 2 node: %d", levels.get(i).get(last2Idx).size()));
+//      }
     }
   }
 

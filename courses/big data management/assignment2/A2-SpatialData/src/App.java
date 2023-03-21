@@ -21,7 +21,7 @@ public class App {
             System.out.println("Please input the file path of the Rtree: ");
             String rTreeFileName = args[1];
             rTree.readTreeFromFile(rTreeFileName);
-            // rTree.writeTree("output/Rtree2.txt");
+             rTree.writeTree("output/Rtree2.txt");
 
             System.out.println("Please input the file path of the range queries: ");
             String rQueriesFileName = args[2];
